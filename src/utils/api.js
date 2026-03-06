@@ -1,6 +1,6 @@
 // API utility: base URL and fetch helpers
 
-const BASE_URL = 'http://localhost:8080';
+const BASE_URL = 'https://dashboardbe-4row.onrender.com';
 
 export const apiPost = async (endpoint, body) => {
     const response = await fetch(`${BASE_URL}${endpoint}`, {
