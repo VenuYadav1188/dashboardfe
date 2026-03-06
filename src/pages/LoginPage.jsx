@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { apiPost } from '../utils/api';
-import { setUser } from '../utils/auth';
+import { useAuth } from '../context/AuthContext';
 
 const LoginPage = () => {
     const navigate = useNavigate();
+    const { login } = useAuth();
     const [form, setForm] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -24,8 +25,10 @@ const LoginPage = () => {
         try {
             const { ok, data } = await apiPost('/api/auth/login', form);
             if (ok && data.success) {
-                setUser({ name: data.name, email: data.email, role: data.role });
-                if (data.role === 'STUDENT') navigate('/student/dashboard');
+                // Determine user role ignoring case and mapping appropriately to the URL routes
+                const userRole = data.role ? data.role.toLowerCase() : '';
+                login({ name: data.name, email: data.email, role: userRole });
+                if (userRole === 'student') navigate('/student/dashboard');
                 else navigate('/teacher/dashboard');
             } else {
                 setError(data.message || 'Login failed.');
